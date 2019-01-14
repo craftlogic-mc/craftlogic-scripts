@@ -25,7 +25,7 @@ public class CommandSenderExtension {
         if (unwrapped instanceof EntityPlayerMP) {
             ((EntityPlayerMP) unwrapped).connection.processChatMessage(new CPacketChatMessage(message));
         } else if (unwrapped instanceof MinecraftServer) {
-            ((MinecraftServer) sender).getCommandManager().executeCommand(unwrapped, message);
+            ((MinecraftServer) unwrapped).getCommandManager().executeCommand(unwrapped, message);
         }
     }
 }
