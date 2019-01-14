@@ -1,0 +1,11 @@
+commands.script.usage=/script <list|load|unload> [id] - Script management
+commands.script.disabled=Scripting system is disabled!
+commands.script.list=Loaded scripts: %s
+commands.script.list.empty=No scripts has been loaded
+commands.script.load.success=Successfully loaded script %s
+commands.script.load.fail=Error loading script '%s': %s. See console for more details.
+commands.script.load.fail.generic=Script loading failed
+commands.script.unload.success=Successfully unloaded script %s
+commands.script.unload.fail=Error unloading script '%s': %s. See console for more details.
+commands.script.unload.fail.generic=Script unloading failed
+commands.script.entry.click=Click to unload script %s

@@ -1,0 +1,11 @@
+commands.script.usage=/script <list|load|unload> [идентификатор] - Управление скриптами
+commands.script.disabled=Система скриптов отключена!
+commands.script.list=Загруженные скрипты: %s
+commands.script.list.empty=Нет загруженных скриптов
+commands.script.load.success=Скрипт %s успешно загружен
+commands.script.load.fail=При загрузке скрипта '%s' произошла ошибка: %s. Смотрите детали в консоли.
+commands.script.load.fail.generic=Ошибка загрузки скрипта
+commands.script.unload.success=Скрипт %s успешно выгружен
+commands.script.unload.fail=При выгрузке скрипта '%s' произошла ошибка: %s. Смотрите делали в консоли.
+commands.script.unload.fail.generic=При выгрузке скрипта произошёл сбой
+commands.script.entry.click=Нажмите, чтобы выгрузить скрипт %s
