@@ -24,7 +24,7 @@ public class ScriptCommands implements CommandRegistrar {
         syntax = {
             "list",
             "load <id>...",
-            "unload <id:ScriptId>..."
+            "unload <id:Script>..."
         }
     )
     public static void commandScript(CommandContext ctx) throws Exception {
@@ -32,7 +32,7 @@ public class ScriptCommands implements CommandRegistrar {
         if (!scriptManager.isEnabled()) {
             throw new CommandException("commands.script.disabled");
         }
-        switch (ctx.constant()) {
+        switch (ctx.action(0)) {
             case "list": {
                 Collection<ScriptContainerFile> loadedScripts = scriptManager.getAllLoadedScripts();
                 if (loadedScripts.isEmpty()) {
@@ -154,11 +154,11 @@ public class ScriptCommands implements CommandRegistrar {
     public static void commandScreen(CommandContext ctx) throws CommandException {
         String id = ctx.get("id").asString();
         String args = ctx.getIfPresent("args", Argument::asString).orElse("");
-        Player player = ctx.getIfPresent("player", Argument::asPlayer).orElse(ctx.senderAsPlayer());
+        Player player = ctx.has("player") ? ctx.get("player").asPlayer() : ctx.senderAsPlayer();
         CraftScripts.showScreen(id, player.getEntity(), args);
     }
 
-    @ArgumentCompleter(type = "ScriptId")
+    @ArgumentCompleter(type = "Script")
     public static List<String> completerScriptId(ArgumentCompletionContext ctx) {
         return ctx.server().getManager(ScriptManager.class).getAllLoadedScripts()
                 .stream()

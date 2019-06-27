@@ -7,7 +7,9 @@ import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraft.server.MinecraftServer;
 import ru.craftlogic.api.world.CommandSender;
 import ru.craftlogic.api.world.Player;
+import ru.craftlogic.util.ReflectiveUsage;
 
+@ReflectiveUsage
 public class CommandSenderExtension {
     public static <T> T asType(CommandSender sender, Class<T> type) throws Exception {
         if (type == Player.class) {
