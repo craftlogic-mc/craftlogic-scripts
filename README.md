@@ -45,3 +45,71 @@ command('god', syntax: ['', '<target:Player>']) { ctx ->
 	}
 }
 ```
+rtp.gs:
+```groovy
+import net.minecraft.util.math.BlockPos
+
+command('rtp') {
+	rtp(senderAsPlayer().getEntity())
+}
+
+boolean rtp(def player) {
+	BlockPos pos = findPos(player, 20)
+	if (pos != null) {
+		def pl = $server.playerManager.getOnline(player.getGameProfile().getId())
+		return pl.teleport(pos.getX(), pos.getY(), pos.getZ(), 0f, 0f)
+	}
+	return false
+}
+
+BlockPos findPos(def player, int tries) {
+	def world = player.world
+	def rand = world.rand
+	def wb = world.worldBorder
+	int w2 = ((int)wb.maxX() - (int)wb.minX()) / 2;
+	int h2 = ((int)wb.maxZ() - (int)wb.minZ()) / 2;
+
+	int centerX = (int)wb.getCenterX();
+	int centerZ = (int)wb.getCenterZ();
+
+	for (int i = 0; i < tries; i++) {
+		int x = centerX + rand.nextInt(w2) * (rand.nextBoolean() ? 1 : -1) 
+		int z = centerZ + rand.nextInt(h2) * (rand.nextBoolean() ? 1 : -1)
+		def chunk = world.getChunk(x >> 4, z >> 4) //FORCE CHUNK GEN
+		int y = chunk.getHeightValue(x & 15, z & 15)
+		def pos = new BlockPos(x, y, z);
+		while (!world.isAirBlock(pos) && y < world.getHeight()) {
+			pos = new BlockPos(x, y, z);
+			y++
+		} 
+		if (y < world.getHeight()) {
+			return pos
+		}
+	} 
+
+	return null
+}
+
+when('player:respawn') {
+	if (player.spawnPos == null) {
+		if (rtp(player)) {
+			player.sendMessage('You woke up in an unknown place'.green())
+		} else {
+			player.sendMessage('Unable to find suitable location in world'.red());
+		}
+	}
+}
+
+def kitStart(def player) {
+	//TODO
+}
+
+when('player:login') {
+	long playTime = System.currentTimeMillis() - player.firstPlayed
+	if (playTime < 100 && player.world.provider.getDimension() == 0) {
+		rtp(player)
+		player.sendMessage('Welcome to '.yellow() + 'Our Server'.gold() + '!'.yellow())
+		kitStart(player)
+	}
+}
+```
