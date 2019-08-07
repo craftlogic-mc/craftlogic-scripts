@@ -3,7 +3,7 @@ LICENSE: CC BY-NC-SA https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 # Example scripts
 automessage.gs:
-`def counter = 0
+```def counter = 0
 def interval = 5 * 60 * 20
 def prefix = '['.gray() + 'Hint'.yellow() + ']'.gray()
 def messages = [
@@ -19,4 +19,4 @@ when('server:tick') { event ->
 		def message = messages[new Random().nextInt(messages.size())]
 		$server.broadcast(prefix + ' ' + message)
 	}
-}`
+}```
