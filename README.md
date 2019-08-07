@@ -1,6 +1,9 @@
 # Scripts module of CraftLogic minecraft mod
 LICENSE: CC BY-NC-SA https://creativecommons.org/licenses/by-nc-sa/4.0/
 
+You dont't have to restart the server every time you add or delete a command or if you want to load a new script.
+Just type: /script load script_name
+
 # Example scripts
 automessage.gs:
 ```groovy
