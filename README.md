@@ -22,3 +22,26 @@ when('server:tick') { event ->
 	}
 }
 ```
+godmode.gs:
+```groovy
+command('god', syntax: ['', '<target:Player>']) { ctx ->
+	def self = !ctx.has('target')
+	def target = self ? ctx.senderAsPlayer() : ctx.target.asPlayer()
+	if (self || ctx.checkPermission(true, 'commands.god.others', 2)) {
+		def cap = target.entity.capabilities
+		def msg
+		if (cap.disableDamage) {
+			cap.disableDamage = false
+			msg = 'You\'ve turned the god mode off'.gray()
+		} else {
+			cap.disableDamage = true
+			msg = 'You\'ve turned the god mode on'.gray()
+		}
+		if (!self) {
+			msg = msg.appendText(' for ')
+			         .appendSibling(target.name.darkGray())
+		}
+		ctx.sendNotification(msg)
+	}
+}
+```
