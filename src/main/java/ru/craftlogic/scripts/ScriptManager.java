@@ -28,6 +28,9 @@ import ru.craftlogic.scripts.common.ScriptContainer;
 import ru.craftlogic.scripts.common.ScriptContainerFile;
 import ru.craftlogic.scripts.common.ScriptFile;
 import ru.craftlogic.scripts.common.ScriptShell;
+import ru.craftlogic.scripts.common.commands.CommandScreen;
+import ru.craftlogic.scripts.common.commands.CommandScript;
+import ru.craftlogic.scripts.common.commands.CommandShell;
 import ru.craftlogic.scripts.common.internal.CustomMetaClassCreationHandle;
 
 import java.io.FileNotFoundException;
@@ -73,7 +76,16 @@ public class ScriptManager extends ConfigurableManager {
 
     @Override
     public void registerCommands(CommandManager commandManager) {
-        commandManager.registerCommandContainer(ScriptCommands.class);
+        commandManager.registerArgumentType("Script", false, ctx ->
+            ctx.server().getManager(ScriptManager.class).getAllLoadedScripts()
+                .stream()
+                .map(ScriptContainer::getName)
+                .collect(Collectors.toList())
+        );
+
+        commandManager.registerCommand(new CommandScript());
+        commandManager.registerCommand(new CommandShell());
+        commandManager.registerCommand(new CommandScreen());
     }
 
     @Override

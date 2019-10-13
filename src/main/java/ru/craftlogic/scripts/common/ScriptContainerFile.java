@@ -6,6 +6,7 @@ import net.minecraft.command.ICommand;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.*;
+import ru.craftlogic.api.command.CommandBase;
 import ru.craftlogic.api.command.CommandExecutor;
 import ru.craftlogic.api.server.Server;
 import ru.craftlogic.api.util.Pair;
@@ -78,9 +79,9 @@ public class ScriptContainerFile extends ScriptContainer {
         return manager;
     }
 
-    public ICommand registerCommand(String name, List<String> syntax, List<String> aliases, List<String> permissions, int opLevel, CommandExecutor executor) {
+    public ICommand registerCommand(String name, List<CommandBase.Syntax> syntax, List<String> aliases, int opLevel, CommandExecutor executor) {
         Server server = this.manager.getServer();
-        return server.getCommandManager().registerCommand(name, syntax, aliases, permissions, opLevel, executor);
+        return server.getCommandManager().registerCommand(name, syntax, aliases, opLevel, executor);
     }
 
     public NBTTagCompound handlePayload(String channel, NBTTagCompound data) {

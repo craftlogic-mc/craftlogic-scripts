@@ -6,12 +6,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import ru.craftlogic.api.command.CommandBase;
+import ru.craftlogic.api.command.CommandBase.Syntax;
 import ru.craftlogic.api.server.Server;
 import ru.craftlogic.scripts.Events;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
+import java.util.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -58,14 +58,14 @@ public abstract class ScriptFile extends ScriptBase<ScriptContainerFile> {
     }
 
     protected void command(Map<String, Object> data, String name, Closure<Void> handler) {
-        List<String> permissions = parseList(data, "permissions", singletonList("commands." + name));
         int opLevel = data.containsKey("opLevel") ? (int)data.get("opLevel") : 4;
         List<String> aliases = parseList(data, "aliases", emptyList());
-        List<String> syntax = parseList(data, "syntax", singletonList(""));
+        List<Syntax> defSyntax = singletonList(new Syntax("", "commands." + name));
+        List<Syntax> syntax = parseSyntax(data, name, "syntax", defSyntax);
         if (syntax.isEmpty()) {
-            syntax.add("");
+            syntax.addAll(defSyntax);
         }
-        ICommand cmd = this.container.registerCommand(name, syntax, aliases, permissions, opLevel,
+        ICommand cmd = this.container.registerCommand(name, syntax, aliases, opLevel,
             ctx -> {
                 handler.setDelegate(ctx);
                 handler.call(ctx);
@@ -81,6 +81,34 @@ public abstract class ScriptFile extends ScriptBase<ScriptContainerFile> {
 
     private List<String> parseList(Map<String, Object> map, String key, List<String> def) {
         return map.containsKey(key) ? parseList(map.get(key)) : def;
+    }
+
+    private List<Syntax> parseSyntax(Map<String, Object> map, String name, String key, List<Syntax> def) {
+        if (map.containsKey(key)) {
+            Object v = map.get(key);
+            if (v instanceof String) {
+                return singletonList(new Syntax((String) v, "commands." + name));
+            } else if (v instanceof Syntax) {
+                return singletonList((Syntax) v);
+            } else if (v instanceof Collection) {
+                Collection syntax = (Collection) v;
+                List<Syntax> result = new ArrayList<>();
+                for (Object s : syntax) {
+                    if (s instanceof String) {
+                        result.add(new Syntax((String) s, "commands." + name));
+                    } else if (s instanceof Syntax) {
+                        result.add((Syntax) s);
+                    } else {
+                        throw new IllegalArgumentException("Invalid command syntax object for command `" + name + "`");
+                    }
+                }
+                return result;
+            } else {
+                throw new IllegalArgumentException("Invalid command syntax object for command `" + name + "`");
+            }
+        } else {
+            return def;
+        }
     }
 
     private List<String> parseList(Object obj) {
