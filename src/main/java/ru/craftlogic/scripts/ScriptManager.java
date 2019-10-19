@@ -28,9 +28,9 @@ import ru.craftlogic.scripts.common.ScriptContainer;
 import ru.craftlogic.scripts.common.ScriptContainerFile;
 import ru.craftlogic.scripts.common.ScriptFile;
 import ru.craftlogic.scripts.common.ScriptShell;
-import ru.craftlogic.scripts.common.commands.CommandScreen;
-import ru.craftlogic.scripts.common.commands.CommandScript;
 import ru.craftlogic.scripts.common.commands.CommandShell;
+import ru.craftlogic.scripts.common.commands.CommandScript;
+import ru.craftlogic.scripts.common.commands.CommandScreen;
 import ru.craftlogic.scripts.common.internal.CustomMetaClassCreationHandle;
 
 import java.io.FileNotFoundException;
@@ -84,8 +84,8 @@ public class ScriptManager extends ConfigurableManager {
         );
 
         commandManager.registerCommand(new CommandScript());
-        commandManager.registerCommand(new CommandShell());
         commandManager.registerCommand(new CommandScreen());
+        commandManager.registerCommand(new CommandShell());
     }
 
     @Override

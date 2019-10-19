@@ -6,17 +6,10 @@ import groovy.lang.GroovyShell;
 import net.minecraft.command.CommandException;
 import ru.craftlogic.api.command.CommandBase;
 import ru.craftlogic.api.command.CommandContext;
-import ru.craftlogic.api.text.Text;
-import ru.craftlogic.api.text.TextString;
-import ru.craftlogic.api.text.TextTranslation;
 import ru.craftlogic.api.world.Player;
-import ru.craftlogic.scripts.CraftScripts;
 import ru.craftlogic.scripts.ScriptManager;
-import ru.craftlogic.scripts.common.ScriptContainer;
-import ru.craftlogic.scripts.common.ScriptContainerFile;
 import ru.craftlogic.scripts.common.ScriptShell;
 
-import java.util.Collection;
 import java.util.Collections;
 
 public class CommandShell extends CommandBase {
@@ -27,9 +20,35 @@ public class CommandShell extends CommandBase {
 
     @Override
     protected void execute(CommandContext ctx) throws CommandException {
-        String id = ctx.get("id").asString();
-        String args = ctx.getIfPresent("args", CommandContext.Argument::asString).orElse("");
-        Player player = ctx.has("player") ? ctx.get("player").asPlayer() : ctx.senderAsPlayer();
-        CraftScripts.showScreen(id, player.getEntity(), args);
+        ScriptManager scriptManager = ctx.server().getManager(ScriptManager.class);
+        if (!scriptManager.isEnabled()) {
+            throw new CommandException("commands.script.disabled");
+        }
+        GroovyShell shell = scriptManager.getShell();
+        ScriptShell script;
+        try {
+            script = (ScriptShell) shell.parse(ctx.get("value").asString(), "@Shell");
+        } catch (GroovyRuntimeException exc) {
+            String msg = exc.getMessageWithoutLocationText();
+            if (msg != null) {
+                ctx.sendMessage(msg);
+            } else {
+                throw exc;
+            }
+            return;
+        }
+        Binding binding = script.getBinding();
+        binding.setProperty("server", ctx.server());
+        binding.setProperty("me", ctx.sender());
+        for (Player player : ctx.server().getPlayerManager().getAllOnline()) {
+            binding.setProperty("$" + player.getProfile().getName(), player);
+        }
+        script.setBinding(binding);
+        try {
+            Object result = script.run();
+            ctx.sendMessage("Returned: %s", result);
+        } catch (GroovyRuntimeException exc) {
+            ctx.sendMessage(exc.getMessage());
+        }
     }
 }
