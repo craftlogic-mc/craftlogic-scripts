@@ -24,6 +24,7 @@ import java.nio.file.Path;
 @Mod(modid = CraftScripts.MOD_ID, version = CraftScripts.VERSION, dependencies = "required-after:" + CraftAPI.MOD_ID)
 @RemoteDependency(
     value = "org.codehaus.groovy:groovy-all:jar:" + CraftScripts.GROOVY_VERSION,
+    checkClass = "org.codehaus.groovy.control.CompilerConfiguration",
     transformerExclusions = {
         "groovy.", "org.codehaus.groovy.", "groovyjarjarantlr.", "groovyjarjarasm.", "groovyjarjarcommonscli."
     }
