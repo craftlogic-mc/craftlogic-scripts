@@ -2,6 +2,7 @@ package ru.craftlogic.scripts.common;
 
 import groovy.lang.Script;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -9,10 +10,16 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.DimensionType;
 import ru.craftlogic.api.text.Text;
+import ru.craftlogic.api.world.Dimension;
 
 public abstract class ScriptBase<C extends ScriptContainer> extends Script {
     protected C container;
+    protected static final ItemsMap items = new ItemsMap();
+    protected static final BlocksMap blocks = new BlocksMap();
+    protected static final SoundsMap sounds = new SoundsMap();
+    protected static final DimensionsMap dimensions = new DimensionsMap();
 
     void setContainer(C container) {
         this.container = container;
@@ -27,7 +34,7 @@ public abstract class ScriptBase<C extends ScriptContainer> extends Script {
     }
 
     public void print(Text<?, ?> value) {
-        this.print(value.build());
+        print(value.build());
     }
 
     public void print(ITextComponent value) {
@@ -39,42 +46,45 @@ public abstract class ScriptBase<C extends ScriptContainer> extends Script {
 
     @Override
     public void print(Object value) {
-        this.print(new TextComponentString(String.valueOf(value)));
+        print(new TextComponentString(String.valueOf(value)));
     }
 
     @Override
     public void println() {
-        this.print("\n");
+        print("\n");
     }
 
     @Override
     public void println(Object value) {
-        this.print(value);
+        print(value);
     }
 
     @Override
     public void printf(String format, Object value) {
-        this.print(String.format(format, value));
+        print(String.format(format, value));
     }
 
     @Override
     public void printf(String format, Object[] values) {
-        this.print(String.format(format, values));
+        print(String.format(format, values));
     }
 
-    protected ItemManager getItem() {
-        return new ItemManager();
+    @Deprecated
+    protected ItemsMap getItem() {
+        return items;
     }
 
-    protected BlockManager getBlock() {
-        return new BlockManager();
+    @Deprecated
+    protected BlocksMap getBlock() {
+        return blocks;
     }
 
-    protected SoundManager getSound() {
-        return new SoundManager();
+    @Deprecated
+    protected SoundsMap getSound() {
+        return sounds;
     }
 
-    private static class ItemManager {
+    public static class ItemsMap {
         public Item getAt(String id) {
             return Item.REGISTRY.getObject(new ResourceLocation(id));
         }
@@ -104,15 +114,30 @@ public abstract class ScriptBase<C extends ScriptContainer> extends Script {
         }
     }
 
-    private static class BlockManager {
+    public static class BlocksMap {
         public Block getAt(String id) {
             return Block.REGISTRY.getObject(new ResourceLocation(id));
         }
+
+        public IBlockState getAt(String id, int meta) {
+            return Block.REGISTRY.getObject(new ResourceLocation(id)).getStateFromMeta(meta);
+        }
     }
 
-    private static class SoundManager {
+    public static class SoundsMap {
         public SoundEvent getAt(String id) {
             return SoundEvent.REGISTRY.getObject(new ResourceLocation(id));
+        }
+    }
+
+    public static class DimensionsMap {
+        public Dimension getAt(String id) {
+            for (DimensionType d : DimensionType.values()) {
+                if (d.getName().equals(id)) {
+                    return Dimension.fromVanilla(d);
+                }
+            }
+            return null;
         }
     }
 }

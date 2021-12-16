@@ -31,6 +31,7 @@ public class ScriptContainerFile extends ScriptContainer {
     public ScriptContainerFile(ScriptManager manager, String id, JsonObject info, ScriptFile script) {
         super(id, info, script);
         this.manager = manager;
+        script.server = manager.getServer();
     }
 
     public void load() {

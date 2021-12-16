@@ -4,11 +4,13 @@ import groovy.lang.Closure;
 import net.minecraft.command.ICommand;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import ru.craftlogic.api.command.CommandBase;
 import ru.craftlogic.api.command.CommandBase.Syntax;
 import ru.craftlogic.api.server.Server;
+import ru.craftlogic.api.world.Dimension;
+import ru.craftlogic.api.world.World;
 import ru.craftlogic.scripts.Events;
 
 import java.util.*;
@@ -17,9 +19,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public abstract class ScriptFile extends ScriptBase<ScriptContainerFile> {
+    Server server;
+    protected final WorldsMap worlds = new WorldsMap();
+
     @Override
     protected void showChatMessage(ITextComponent message) {
-        ((Server)getBinding().getProperty("$server")).sendMessage(message);
+        server.sendMessage(message);
     }
 
     @Override
@@ -37,24 +42,24 @@ public abstract class ScriptFile extends ScriptBase<ScriptContainerFile> {
 
     protected void when(String event, Closure<Void> handler) {
         Class<? extends Event> type = Objects.requireNonNull(Events.get(event), "Unknown event type: " + event);
-        this.when(type, handler);
+        when(type, handler);
     }
 
     protected void when(Class<? extends Event> event, Closure<Void> handler) {
-        this.when(event, EventPriority.NORMAL, handler);
+        when(event, EventPriority.NORMAL, handler);
     }
 
     protected void when(String event, EventPriority priority, Closure<Void> handler) {
         Class<? extends Event> type = Objects.requireNonNull(Events.get(event), "Unknown event type: " + event);
-        this.when(type, priority, handler);
+        when(type, priority, handler);
     }
 
     protected void when(Class<? extends Event> event, EventPriority priority, Closure<Void> handler) {
-        this.container.when(event, priority, handler);
+        container.when(event, priority, handler);
     }
 
     protected void command(String name, Closure<Void> handler) {
-        this.command(new LinkedHashMap<>(), name, handler);
+        command(new LinkedHashMap<>(), name, handler);
     }
 
     protected void command(Map<String, Object> data, String name, Closure<Void> handler) {
@@ -76,7 +81,7 @@ public abstract class ScriptFile extends ScriptBase<ScriptContainerFile> {
     }
 
     protected void payload(String channel, Closure<NBTTagCompound> callback) {
-        this.container.payloadHandler.put(channel, callback);
+        container.payloadHandler.put(channel, callback);
     }
 
     private List<String> parseList(Map<String, Object> map, String key, List<String> def) {
@@ -116,6 +121,13 @@ public abstract class ScriptFile extends ScriptBase<ScriptContainerFile> {
             return singletonList((String)obj);
         } else {
             return (List<String>)obj;
+        }
+    }
+
+    private class WorldsMap {
+        public World getAt(String id) {
+            Dimension dim = dimensions.getAt(id);
+            return dim != null ? server.getWorldManager().get(dim) : null;
         }
     }
 }

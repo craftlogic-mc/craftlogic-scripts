@@ -122,7 +122,7 @@ public class ScriptManager extends ConfigurableManager {
                 this.compiler = makeShell(binding, compilerConfig);
 
                 for (Path candidate : scriptCandidates) {
-                    this.loadScript(candidate, false, true);
+                    loadScript(candidate, false, true);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -186,16 +186,16 @@ public class ScriptManager extends ConfigurableManager {
     public ScriptContainer loadScript(Path path, boolean reload, boolean run) throws IOException {
         String id = path.getFileName().toString();
         id = id.substring(0, id.lastIndexOf("."));
-        return this.loadScript(id, path, reload, run);
+        return loadScript(id, path, reload, run);
     }
 
     public ScriptContainer loadScript(String id, boolean reload, boolean run) throws IOException {
         Path path = this.scriptsDir.resolve(id + ".gs");
-        return this.loadScript(id, path, reload, run);
+        return loadScript(id, path, reload, run);
     }
 
     public ScriptContainer loadScript(String id, Path path, boolean reload, boolean run) throws IOException {
-        if (this.loadedScripts.containsKey(id)) {
+        if (loadedScripts.containsKey(id)) {
             if (!reload) {
                 return null;
             } else {
@@ -214,7 +214,7 @@ public class ScriptManager extends ConfigurableManager {
             info = new JsonObject();
         }
         long start = System.currentTimeMillis();
-        ScriptFile script = this.compile(id, Files.newBufferedReader(path));
+        ScriptFile script = compile(id, Files.newBufferedReader(path));
         if (script != null) {
             LOGGER.info("Successfully compiled script '{}' (Took {} ms)", id, System.currentTimeMillis() - start);
             ScriptContainerFile container = new ScriptContainerFile(this, id, info, script);
