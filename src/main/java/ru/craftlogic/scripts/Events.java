@@ -10,6 +10,7 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import ru.craftlogic.api.event.entity.EntityTriggerWalkingEvent;
 import ru.craftlogic.api.event.player.PlayerSneakEvent;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class Events {
         register("entity:construct", EntityEvent.EntityConstructing.class);
         register("entity:interact", PlayerInteractEvent.EntityInteract.class);
         register("entity:interact_precise", PlayerInteractEvent.EntityInteractSpecific.class);
+        register("entity:trigger_walking", EntityTriggerWalkingEvent.class);
         register("living:update", LivingEvent.LivingUpdateEvent.class);
         register("living:jump", LivingEvent.LivingJumpEvent.class);
         register("registry", RegistryEvent.class);
