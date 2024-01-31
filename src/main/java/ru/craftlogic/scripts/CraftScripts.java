@@ -32,7 +32,7 @@ import java.nio.file.Path;
 public class CraftScripts {
     public static final String MOD_ID = CraftAPI.MOD_ID + "-scripts";
     public static final String VERSION = "0.2.0-BETA";
-    public static final String GROOVY_VERSION = "2.4.4";
+    public static final String GROOVY_VERSION = "2.5.4";
 
     @SidedProxy(clientSide = "ru.craftlogic.scripts.client.ProxyClient", serverSide = "ru.craftlogic.scripts.common.ProxyCommon")
     public static ProxyCommon PROXY;
