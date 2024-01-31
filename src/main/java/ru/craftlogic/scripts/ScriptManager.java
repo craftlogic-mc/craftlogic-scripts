@@ -13,6 +13,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -141,6 +142,7 @@ public class ScriptManager extends ConfigurableManager {
         imports.addImport("Profile", GameProfile.class.getName());
         imports.addImport("Facing", EnumFacing.class.getName());
         imports.addImport("TextFormatting", TextFormatting.class.getName());
+        imports.addImport("Result", Event.Result.class.getName());
 
         compilerConfig.addCompilationCustomizers(imports);
 
@@ -152,6 +154,8 @@ public class ScriptManager extends ConfigurableManager {
         binding.setVariable("MAIN_HAND", EnumHand.MAIN_HAND);
         binding.setVariable("LEFT_HAND", EnumHand.OFF_HAND);
         binding.setVariable("OFF_HAND", EnumHand.OFF_HAND);
+        binding.setVariable("DENY", Event.Result.DENY);
+        binding.setVariable("ALLOW", Event.Result.DENY);
         for (EnumFacing facing : EnumFacing.values()) {
             binding.setVariable(facing.getName().toUpperCase(), facing);
         }
