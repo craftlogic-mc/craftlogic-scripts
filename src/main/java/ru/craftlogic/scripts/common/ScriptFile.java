@@ -84,6 +84,18 @@ public abstract class ScriptFile extends ScriptBase<ScriptContainerFile> {
         container.payloadHandler.put(channel, callback);
     }
 
+    protected UUID nextTick(Closure<Void> task) {
+        return task(task);
+    }
+
+    protected UUID task(Closure<Void> task) {
+        return server.addTask(server -> task.run());
+    }
+
+    protected UUID delayedTask(long delay, Closure<Void> task) {
+        return server.addDelayedTask(server -> task.run(), delay);
+    }
+
     private List<String> parseList(Map<String, Object> map, String key, List<String> def) {
         return map.containsKey(key) ? parseList(map.get(key)) : def;
     }
